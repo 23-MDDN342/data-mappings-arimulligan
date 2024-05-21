@@ -45,10 +45,10 @@ function Face() {
   // make random coordinates for head fluff
   this.fluffiList = getRandomCoordinates(20);
   this.ear_tilt = 0.8;
-  this.wool_colour = 2;
-  this.earrings = 2;
+  this.wool_colour = 2; // based off of hair colour
+  this.earrings = 2; // based off sex - masculine or feminine
   this.eyeSize = 0.5;
-  this.emotion = 'full of joy';
+  this.emotion = 'tired'; // based off of age
 
   angleMode(RADIANS);
 
@@ -56,6 +56,8 @@ function Face() {
    * Draw the face with position lists that include:
    *    chin, right_eye, left_eye, right_eyebrow, left_eyebrow
    *    bottom_lip, top_lip, nose_tip, nose_bridge, 
+   * Same pose, same face - positions according to this
+   * Same pose, different face - training data variables
    */  
   this.draw = function(positions) {
    let faceSizeY = positions.chin[0][1] - positions.chin[(positions.chin.length-1)/2][1];
@@ -97,15 +99,24 @@ function Face() {
      shineyWoolColour = color('#636161');
    }
 
+   // turning left or right
+   let tipOfNoseBridgeX = positions.nose_bridge[positions.nose_bridge.length-1][0];
+   let showLeftSide = Math.abs(tipOfNoseBridgeX - positions.chin[2][0]) < 0.7 ? false : true;
+   let showRightSide = Math.abs(tipOfNoseBridgeX - positions.chin[14][0]) < 0.7 ? false : true;
+
    // draw the sheep using private methods
-   this._drawEarsAndFaceShape(positions.chin, left_eye_pos, right_eye_pos, positions.right_eyebrow[2][1], mainSheepColour, shadowColour);
+   this._drawEarsAndFaceShape(positions.chin, left_eye_pos, right_eye_pos, positions.right_eyebrow[2][1], showLeftSide, showRightSide, mainSheepColour, shadowColour);
    this._drawWool(shadowColour, middleWoolColour, mainSheepColour, shineyWoolColour);
-   this._drawPupils(left_eye_pos, right_eye_pos, outlineOfSheep, mainSheepColour);
+   this._drawPupils(left_eye_pos, right_eye_pos, showLeftSide, showRightSide, outlineOfSheep, mainSheepColour);
    
    // move cheeks, nose and mouth down according to faceSize
    push();
-   translate(0, faceSizeY/2)
-   this._drawCheeksAndNose(pink);
+  //  translate(0, faceSizeY/2)
+   let cheekPosition1 = positions.nose_tip[0];
+   let cheekPosition2 = positions.nose_tip[positions.nose_tip.length-1];
+   let nosePosition = segment_average(positions.nose_tip);
+   
+   this._drawCheeksAndNose(pink, cheekPosition1, cheekPosition2, nosePosition, showLeftSide, showRightSide);
    
    // emotion
    push();
@@ -127,13 +138,13 @@ function Face() {
      arc(0, -4, 1, 1.5, 0, PI, OPEN);
      pop();
    } else if (this.emotion == 'tired'){
-     line(-1, 3.3, 1, 3.3);
+     line(-0.5, 2.7, 0.7, 2.7);
      pop();
    }
    pop();
  }
 
- this._drawEarsAndFaceShape = function(facePoints, ear_pos1, ear_pos2, yPos, mainColour, shadowColor){
+ this._drawEarsAndFaceShape = function(facePoints, ear_pos1, ear_pos2, yPos, showLeftSide, showRightSide, mainColour, shadowColor){
    // ears
    stroke(shadowColor);
    strokeWeight(0.3);
@@ -169,7 +180,7 @@ function Face() {
   * A private helper method to draw the sheeps' eyes
   * @param {*} outlineOfSheep color of stroke
   */
- this._drawPupils = function(left_eye_pos, right_eye_pos, outlineOfSheep, mainColour){
+ this._drawPupils = function(left_eye_pos, right_eye_pos, showLeftSide, showRightSide, outlineOfSheep, mainColour){
    fill(outlineOfSheep);
    stroke(outlineOfSheep);
    
@@ -177,9 +188,13 @@ function Face() {
     ellipse(left_eye_pos[0], left_eye_pos[1], this.eyeSize, this.eyeSize);
     ellipse(right_eye_pos[0], right_eye_pos[1], this.eyeSize, this.eyeSize);
     noFill();
-    strokeWeight(0.2) // tired wrinkles
-    arc(left_eye_pos[0]-0.3, left_eye_pos[1]+0.5, this.eyeSize+0.5, this.eyeSize+0.5, 0, PI, OPEN);
-    arc(right_eye_pos[0]-0.3, right_eye_pos[1]+0.3, this.eyeSize, this.eyeSize, 0, PI, OPEN);
+    strokeWeight(0.08) // tired wrinkles
+    let biggerWrinkleSize = 0.3;
+    let wrinklePosDiff = 0.2;
+    arc(left_eye_pos[0]-wrinklePosDiff, left_eye_pos[1]+wrinklePosDiff, this.eyeSize+biggerWrinkleSize, this.eyeSize+biggerWrinkleSize, 0, PI, OPEN);
+    arc(left_eye_pos[0]-wrinklePosDiff, left_eye_pos[1]+wrinklePosDiff, this.eyeSize, this.eyeSize, 0, PI, OPEN);
+    arc(right_eye_pos[0]+wrinklePosDiff, right_eye_pos[1]+wrinklePosDiff, this.eyeSize+biggerWrinkleSize, this.eyeSize+biggerWrinkleSize, 0, PI, OPEN);
+    arc(right_eye_pos[0]+wrinklePosDiff, right_eye_pos[1]+wrinklePosDiff, this.eyeSize, this.eyeSize, 0, PI, OPEN);
   } else if (this.emotion == 'full of joy'){
     arc(left_eye_pos[0], left_eye_pos[1], this.eyeSize, this.eyeSize, PI, 0, OPEN);
     arc(right_eye_pos[0], right_eye_pos[1], this.eyeSize, this.eyeSize, PI, 0, OPEN);
@@ -196,20 +211,20 @@ function Face() {
  this._drawWool = function(shadowColour, middleWoolColour, mainSheepColour, shineyWoolColour){
    for (let i = 0; i < this.fluffiList.length; i++){
      let drawShine = false;
-     if (this.fluffiList[i].y > -5.5){
-       fill(shadowColour)
-     } else if (this.fluffiList[i].y > -8) {
-       fill(middleWoolColour)
-     } else {
+     if (this.fluffiList[i].y < -3){
        drawShine = true;
        fill(mainSheepColour);
+    } else if (this.fluffiList[i].y < -2) {
+      fill(middleWoolColour)
+    } else {
+       fill(shadowColour)
      }
      noStroke();
      circle(this.fluffiList[i].x, this.fluffiList[i].y, 1.5);
  
      if (drawShine){
        fill(shineyWoolColour)
-       this._drawRoundedTriangle(this.fluffiList[i].x, this.fluffiList[i].y, 0.7, 0.7)
+       this._drawRoundedTriangle(this.fluffiList[i].x-0.3, this.fluffiList[i].y-0.3, 0.2, 0.7)
      }
    }
  }
@@ -249,26 +264,32 @@ function Face() {
    pop();
  }
 
- this._drawCheeksAndNose = function(pink){
+ this._drawCheeksAndNose = function(pink, cheekPosition1, cheekPosition2, nosePosition, showLeftSide, showRightSide){
   angleMode(RADIANS)
    // rosy cheeks
    fill(pink)
    noStroke();
-   circle(1.5, 1.5, 1)
-   circle(-1.5, 1.5, 1)
+   if (showLeftSide){
+     circle(cheekPosition1[0]-0.6, cheekPosition1[1], 0.7)
+   }
+   if (showRightSide){
+     circle(cheekPosition2[0]+0.6, cheekPosition2[1], 0.7)
+   }
    
+   push();
+   translate(nosePosition[0], nosePosition[1]);
    // mid mouth
-   ellipse(0, 2.3, 0.2, 0.5);
+   ellipse(0, 1, 0.2, 0.5);
    //nostrils
    push();
    rotate(PI/3)
    translate(2.4, -2)
-   ellipse(-0.5, 2.7, 0.2, 0.7);
+   ellipse(-1.5, 2.1, 0.2, 0.7);
    pop();
    push();
    rotate(-PI/3)
    translate(-2.4, -2)
-   ellipse(0.5, 2.7, 0.2, 0.7);
+   ellipse(1.5, 2.1, 0.2, 0.7);
    pop();
  
    // nose
@@ -276,7 +297,8 @@ function Face() {
    scale(1.3, -0.6)
    fill('pink')
    noStroke();
-   this._drawRoundedTriangle(0, -3, 0.5, 0.7)
+   this._drawRoundedTriangle(0, -1, 0.5, 0.7)
+   pop();
    pop();
  }
 
@@ -363,8 +385,8 @@ function Face() {
  */
 function getRandomCoordinates(numCoordinates) {
   const coordinates = [];
-  const minY = -2; // TODO: change this, and ask how to make random points 
-  const maxY = -3.5;
+  const minY = -4; // TODO: change this, and ask how to make random points 
+  const maxY = -2;
   const minX = -1;
   const maxX = 2;
 
