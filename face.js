@@ -4,10 +4,10 @@
  */  
 
 // remove this or set to false to enable full program (load will be slower)
-var DEBUG_MODE = true;
+var DEBUG_MODE = false;
 
 // this can be used to set the number of sliders to show
-var NUM_SLIDERS = 3;
+var NUM_SLIDERS = 5;
 
 // other variables can be in here too
 // here's some examples for colors used
@@ -30,27 +30,13 @@ function segment_average(segment) {
 
 // This where you define your own face object
 function Face() {
-  // these are state variables for a face
-  // (your variables should be different!)
-  this.detailColour = [204, 136, 17];
-  this.mainColour = [51, 119, 153];
-  this.num_eyes = 2;    // can be either 1 (cyclops) or 2 (two eyes)
-  this.eye_shift = -1;   // range is -10 to 10
-  this.mouth_size = 1;  // range is 0.5 to 8
-
-  this.chinColour = [153, 153, 51]
-  this.lipColour = [136, 68, 68]
-  this.eyebrowColour = [119, 85, 17]
-
   // make random coordinates for head fluff
   this.fluffiList = getRandomCoordinates(20);
-  this.ear_tilt = 0.8;
-  this.wool_colour = 2; // based off of hair colour
-  this.earrings = 2; // based off sex - masculine or feminine
+  this.ear_tilt = 0.5;
+  this.wool_colour = 3; // based off of hair colour
+  this.earrings = 1; // based off sex - masculine or feminine
   this.eyeSize = 0.5;
   this.emotion = 'depressed'; // based off of age
-
-  angleMode(RADIANS);
 
   /*
    * Draw the face with position lists that include:
@@ -60,10 +46,8 @@ function Face() {
    * Same pose, different face - training data variables
    */  
   this.draw = function(positions) {
-   let faceSizeY = positions.chin[0][1] - positions.chin[(positions.chin.length-1)/2][1];
    let left_eye_pos = segment_average(positions.left_eye);
    let right_eye_pos = segment_average(positions.right_eye);
-
 
    let pink = color(227, 132, 163, 200);
    let mainSheepColour;
@@ -110,8 +94,6 @@ function Face() {
    this._drawPupils(left_eye_pos, right_eye_pos, showLeftSide, showRightSide, outlineOfSheep, mainSheepColour);
    
    // move cheeks, nose and mouth down according to faceSize
-   push();
-  //  translate(0, faceSizeY/2)
    let cheekPosition1 = positions.nose_tip[0];
    let cheekPosition2 = positions.nose_tip[positions.nose_tip.length-1];
    let nosePosition = segment_average(positions.nose_tip);
@@ -122,15 +104,21 @@ function Face() {
    push();
    noFill();
    stroke(outlineOfSheep);
-   strokeWeight(0.15)
+   strokeWeight(0.1)
    if (this.emotion == 'full of joy'){
      scale(1.5, 1)
-     arc(-0.25, 2.5, 0.5, 0.5, 0, PI, OPEN);
-     arc(0.25, 2.5, 0.5, 0.5, 0, PI, OPEN);
-     fill('pink')
-     strokeWeight(0.2)
-     arc(0, 2.8, 0.5, 0.5, 0, PI, OPEN);
-     pop();
+     if (!showLeftSide){
+       arc(nosePosition[0]+0.23, 1.5, 0.3, 0.3, 0, PI, OPEN);
+    } else if (!showRightSide){
+       arc(nosePosition[0]-0.07, 1.5, 0.3, 0.3, 0, PI, OPEN);
+     } else {
+        arc(nosePosition[0]+0.23, 1.5, 0.3, 0.3, 0, PI, OPEN);
+        arc(nosePosition[0]-0.07, 1.5, 0.3, 0.3, 0, PI, OPEN);
+        fill('pink')
+        strokeWeight(0.1)
+        arc(nosePosition[0]+0.1, 1.7, 0.3, 0.3, 0, PI, OPEN);
+        pop();
+     }
    } else if (this.emotion == 'depressed'){
      scale(1.5, -1);
      // sad mouth
@@ -142,21 +130,24 @@ function Face() {
      line(-0.5, nosePosition[1]+1.2, 0.7, nosePosition[1]+1.2);
      pop();
    }
-   pop();
  }
 
  this._drawEarsAndFaceShape = function(facePoints, ear_pos1, ear_pos2, yPos, showLeftSide, showRightSide, mainColour, shadowColor){
    // ears
    stroke(shadowColor);
    strokeWeight(0.3);
-   push()
-   translate(1.5, 1)
-   this._drawEars(ear_pos1[0], ear_pos1[1], mainColour); 
-   pop();
-   push();
-   scale(-1, 1)
-   this._drawEars(ear_pos2[0], ear_pos2[1], mainColour);
-   pop();
+   if (showRightSide){
+     push()
+     translate(1.5, 1)
+     this._drawEars(ear_pos1[0]+0.5, ear_pos1[1]-0.5, mainColour); 
+     pop();
+   }
+   if (showLeftSide){
+     push();
+     scale(-1, 1)
+     this._drawEars(ear_pos2[0], ear_pos2[1], mainColour);
+     pop();
+   }
 
    // shape of face
    stroke(shadowColor);
@@ -187,30 +178,43 @@ function Face() {
    stroke(outlineOfSheep);
    
   if (this.emotion == 'tired'){
-    ellipse(left_eye_pos[0], left_eye_pos[1], this.eyeSize, this.eyeSize);
-    ellipse(right_eye_pos[0], right_eye_pos[1], this.eyeSize, this.eyeSize);
     noFill();
-    strokeWeight(0.08) // tired wrinkles
-    let biggerWrinkleSize = 0.5;
-    let biggerWrinkleSizeWidth = 0.6
-    let wrinklePosDiff = 0.15;
+    strokeWeight(0.2)
+    let biggerWrinkleSize = 0.4;
+    let biggerWrinkleSizeWidth = 0.5
+    let wrinklePosDiff = 0.1;
     let wrinklePosDiff_X = 0.1;
-    arc(left_eye_pos[0]-wrinklePosDiff_X-0.1, left_eye_pos[1]+wrinklePosDiff, this.eyeSize+biggerWrinkleSizeWidth, this.eyeSize+biggerWrinkleSize, 0, PI+(PI/10), OPEN);
-    arc(left_eye_pos[0]-wrinklePosDiff_X, left_eye_pos[1]+wrinklePosDiff, this.eyeSize+0.3, this.eyeSize+0.2, 0, PI, OPEN);
-    arc(right_eye_pos[0]+wrinklePosDiff_X+0.1, right_eye_pos[1]+wrinklePosDiff, this.eyeSize+biggerWrinkleSizeWidth, this.eyeSize+biggerWrinkleSize, 0, PI+(PI/10), OPEN);
-    arc(right_eye_pos[0]+wrinklePosDiff_X, right_eye_pos[1]+wrinklePosDiff, this.eyeSize+0.3, this.eyeSize+0.2, 0, PI, OPEN);
+    if (showLeftSide){
+      ellipse(left_eye_pos[0], left_eye_pos[1], this.eyeSize, this.eyeSize);
+      strokeWeight(0.1)
+      arc(left_eye_pos[0]-wrinklePosDiff_X-0.1, left_eye_pos[1]+wrinklePosDiff, this.eyeSize+biggerWrinkleSizeWidth, this.eyeSize+biggerWrinkleSize, 0, PI+(PI/10), OPEN);
+      arc(left_eye_pos[0]-wrinklePosDiff_X, left_eye_pos[1]+wrinklePosDiff, this.eyeSize+0.3, this.eyeSize+0.2, 0, PI, OPEN);
+    }
+    if (showRightSide){
+      strokeWeight(0.2)
+      ellipse(right_eye_pos[0], right_eye_pos[1], this.eyeSize, this.eyeSize);
+      strokeWeight(0.1)
+      arc(right_eye_pos[0]+wrinklePosDiff_X+0.1, right_eye_pos[1]+wrinklePosDiff, this.eyeSize+biggerWrinkleSizeWidth, this.eyeSize+biggerWrinkleSize, 0, PI+(PI/10), OPEN);
+      arc(right_eye_pos[0]+wrinklePosDiff_X, right_eye_pos[1]+wrinklePosDiff, this.eyeSize+0.3, this.eyeSize+0.2, 0, PI, OPEN);
+    }
   } else if (this.emotion == 'full of joy'){
-    arc(left_eye_pos[0], left_eye_pos[1], this.eyeSize, this.eyeSize, PI, 0, OPEN);
-    arc(right_eye_pos[0], right_eye_pos[1], this.eyeSize, this.eyeSize, PI, 0, OPEN);
+    strokeWeight(0.2)
+    let extraEyeSize = 0.1;
+    if (showLeftSide) arc(left_eye_pos[0], left_eye_pos[1], this.eyeSize+extraEyeSize, this.eyeSize+extraEyeSize, PI, 0, OPEN);
+    if (showRightSide) arc(right_eye_pos[0], right_eye_pos[1], this.eyeSize+extraEyeSize, this.eyeSize+extraEyeSize, PI, 0, OPEN);
   } else if (this.emotion == 'depressed') {
     strokeWeight(0.1)
     fill(mainColour);
     let eyelid_Y = -0.1;
     let eyelid_X = 0.2;
-    ellipse(left_eye_pos[0], left_eye_pos[1]+0.4, this.eyeSize, this.eyeSize);
-    arc(left_eye_pos[0]-eyelid_X, left_eye_pos[1]-eyelid_Y, this.eyeSize+0.8, this.eyeSize+0.3, 0, PI-PI/2, OPEN);
-    ellipse(right_eye_pos[0], right_eye_pos[1]+0.4, this.eyeSize, this.eyeSize);
-    arc(right_eye_pos[0]+eyelid_X, right_eye_pos[1]-eyelid_Y, this.eyeSize+0.8, this.eyeSize+0.3, PI/2, PI, OPEN);
+    if (showLeftSide){
+      ellipse(left_eye_pos[0], left_eye_pos[1]+0.4, this.eyeSize, this.eyeSize);
+      arc(left_eye_pos[0]-eyelid_X, left_eye_pos[1]-eyelid_Y, this.eyeSize+0.8, this.eyeSize+0.3, 0, PI-PI/2, OPEN);
+    }
+    if (showRightSide){
+      ellipse(right_eye_pos[0], right_eye_pos[1]+0.4, this.eyeSize, this.eyeSize);
+      arc(right_eye_pos[0]+eyelid_X, right_eye_pos[1]-eyelid_Y, this.eyeSize+0.8, this.eyeSize+0.3, PI/2, PI, OPEN);
+    }
   }
   
  }
@@ -253,20 +257,21 @@ function Face() {
    if (this.earrings == 1){
      // two blue earrings on each ear
      fill('#004B87'); // dark blue
-     ellipse(x+2, y+1, 0.7, 0.7);
-     ellipse(x+2, y+2, 2.5, 1);
+     ellipse(x+0.2, y+0.6, 0.2, 0.2);
+     ellipse(x+0.5, y+1, 1, 0.5);
      fill('#2BA4DD') // light blue
-     ellipse(x+1.2, y+2, 0.5, 0.5);
-     ellipse(x+2, y+2, 0.5, 0.5);
-     ellipse(x+2.7, y+2, 0.5, 0.5);
+     let dotSize = 0.2;
+     ellipse(x+0.3, y+1, dotSize, dotSize);
+     ellipse(x+0.5, y+1, dotSize, dotSize);
+     ellipse(x+0.7, y+1, dotSize, dotSize);
    } else if (this.earrings == 2){
      // no earrings
    } else {
      // orange and purple square earrings on top of one another
      fill('purple');
-     rect(x+1.5, y+0.5, 1, 1);
+     rect(x+0.2, y+0.5, 0.3, 0.3);
      fill('orange')
-     rect(x+2.2, y+1.2, 1, 1);
+     rect(x+0.5, y+0.8, 0.4, 0.4);
    }
    pop();
  }
@@ -370,17 +375,22 @@ function Face() {
 
   /* set internal properties based on list numbers 0-100 */
   this.setProperties = function(settings) {
-    this.num_eyes = int(map(settings[0], 0, 100, 1, 2));
-    this.eye_shift = map(settings[1], 0, 100, -2, 2);
-    this.mouth_size = map(settings[2], 0, 100, 0.5, 8);
+    this.wool_colour = int(map(settings[0], 0, 100, 1, 4));
+    this.eyeSize = map(settings[1], 0, 100, 0, 1);
+    this.ear_tilt = map(settings[2], 0, 100, -0.5, 0.7);
+    this.earrings = int(map(settings[3], 0, 100, 1, 3));
+    let emotionTeller = int(map(settings[4], 0, 100, 1, 3));
+    // this.emotion = emotionTeller == 1 ? 'full of joy' : emotionTeller == 2 ? 'tired' : 'depressed';
   }
 
   /* get internal properties as list of numbers 0-100 */
   this.getProperties = function() {
-    let settings = new Array(3);
-    settings[0] = map(this.num_eyes, 1, 2, 0, 100);
-    settings[1] = map(this.eye_shift, -2, 2, 0, 100);
-    settings[2] = map(this.mouth_size, 0.5, 8, 0, 100);
+    let settings = new Array(5);
+    settings[0] = map(this.wool_colour, 1, 4, 0, 100);
+    settings[1] = map(this.eyeSize, 0, 1, 0, 100);
+    settings[2] = map(this.ear_tilt, -0.5, 0.7, 0, 100);
+    settings[3] = map(this.earrings, 1, 3, 0, 100);
+    settings[4] = map(this.emotion, 1, 3, 0, 100);
     return settings;
   }
 }
