@@ -48,7 +48,7 @@ function Face() {
   this.wool_colour = 2; // based off of hair colour
   this.earrings = 2; // based off sex - masculine or feminine
   this.eyeSize = 0.5;
-  this.emotion = 'tired'; // based off of age
+  this.emotion = 'depressed'; // based off of age
 
   angleMode(RADIANS);
 
@@ -134,11 +134,12 @@ function Face() {
    } else if (this.emotion == 'depressed'){
      scale(1.5, -1);
      // sad mouth
-     arc(0, -4, 1, 2, 0, PI, OPEN);
-     arc(0, -4, 1, 1.5, 0, PI, OPEN);
+     let mouth_Y = -1.8;
+     arc(nosePosition[0]+0.1, mouth_Y, 0.5, 0.5, 0, PI, OPEN);
+     arc(nosePosition[0]+0.1, mouth_Y, 0.5, 0.1, 0, PI, OPEN);
      pop();
    } else if (this.emotion == 'tired'){
-     line(-0.5, 2.7, 0.7, 2.7);
+     line(-0.5, nosePosition[1]+1.2, 0.7, nosePosition[1]+1.2);
      pop();
    }
    pop();
@@ -178,6 +179,7 @@ function Face() {
 
  /**
   * A private helper method to draw the sheeps' eyes
+  * TODO: SHOW LEFT SIDE AND RIGHT SIDE CONDITIONALS
   * @param {*} outlineOfSheep color of stroke
   */
  this._drawPupils = function(left_eye_pos, right_eye_pos, showLeftSide, showRightSide, outlineOfSheep, mainColour){
@@ -189,21 +191,26 @@ function Face() {
     ellipse(right_eye_pos[0], right_eye_pos[1], this.eyeSize, this.eyeSize);
     noFill();
     strokeWeight(0.08) // tired wrinkles
-    let biggerWrinkleSize = 0.3;
-    let wrinklePosDiff = 0.2;
-    arc(left_eye_pos[0]-wrinklePosDiff, left_eye_pos[1]+wrinklePosDiff, this.eyeSize+biggerWrinkleSize, this.eyeSize+biggerWrinkleSize, 0, PI, OPEN);
-    arc(left_eye_pos[0]-wrinklePosDiff, left_eye_pos[1]+wrinklePosDiff, this.eyeSize, this.eyeSize, 0, PI, OPEN);
-    arc(right_eye_pos[0]+wrinklePosDiff, right_eye_pos[1]+wrinklePosDiff, this.eyeSize+biggerWrinkleSize, this.eyeSize+biggerWrinkleSize, 0, PI, OPEN);
-    arc(right_eye_pos[0]+wrinklePosDiff, right_eye_pos[1]+wrinklePosDiff, this.eyeSize, this.eyeSize, 0, PI, OPEN);
+    let biggerWrinkleSize = 0.5;
+    let biggerWrinkleSizeWidth = 0.6
+    let wrinklePosDiff = 0.15;
+    let wrinklePosDiff_X = 0.1;
+    arc(left_eye_pos[0]-wrinklePosDiff_X-0.1, left_eye_pos[1]+wrinklePosDiff, this.eyeSize+biggerWrinkleSizeWidth, this.eyeSize+biggerWrinkleSize, 0, PI+(PI/10), OPEN);
+    arc(left_eye_pos[0]-wrinklePosDiff_X, left_eye_pos[1]+wrinklePosDiff, this.eyeSize+0.3, this.eyeSize+0.2, 0, PI, OPEN);
+    arc(right_eye_pos[0]+wrinklePosDiff_X+0.1, right_eye_pos[1]+wrinklePosDiff, this.eyeSize+biggerWrinkleSizeWidth, this.eyeSize+biggerWrinkleSize, 0, PI+(PI/10), OPEN);
+    arc(right_eye_pos[0]+wrinklePosDiff_X, right_eye_pos[1]+wrinklePosDiff, this.eyeSize+0.3, this.eyeSize+0.2, 0, PI, OPEN);
   } else if (this.emotion == 'full of joy'){
     arc(left_eye_pos[0], left_eye_pos[1], this.eyeSize, this.eyeSize, PI, 0, OPEN);
     arc(right_eye_pos[0], right_eye_pos[1], this.eyeSize, this.eyeSize, PI, 0, OPEN);
   } else if (this.emotion == 'depressed') {
+    strokeWeight(0.1)
     fill(mainColour);
-    ellipse(left_eye_pos[0], left_eye_pos[1]+0.6, this.eyeSize, this.eyeSize);
-    arc(left_eye_pos[0]-0.6, left_eye_pos[1]-0.3, this.eyeSize+2, this.eyeSize+1, 0, PI-PI/2, OPEN);
-    ellipse(right_eye_pos[0], right_eye_pos[1]+0.6, this.eyeSize, this.eyeSize);
-    arc(right_eye_pos[0]-0.6, right_eye_pos[1]-0.3, this.eyeSize+2, this.eyeSize+1, PI/2, 0, OPEN);
+    let eyelid_Y = -0.1;
+    let eyelid_X = 0.2;
+    ellipse(left_eye_pos[0], left_eye_pos[1]+0.4, this.eyeSize, this.eyeSize);
+    arc(left_eye_pos[0]-eyelid_X, left_eye_pos[1]-eyelid_Y, this.eyeSize+0.8, this.eyeSize+0.3, 0, PI-PI/2, OPEN);
+    ellipse(right_eye_pos[0], right_eye_pos[1]+0.4, this.eyeSize, this.eyeSize);
+    arc(right_eye_pos[0]+eyelid_X, right_eye_pos[1]-eyelid_Y, this.eyeSize+0.8, this.eyeSize+0.3, PI/2, PI, OPEN);
   }
   
  }
