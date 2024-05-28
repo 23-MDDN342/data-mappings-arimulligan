@@ -58,19 +58,19 @@ function Face() {
    let shadowColour;
    let shineyWoolColour;
  
-   if (this.wool_colour == 1){
+   if (this.wool_colour == 0){
      mainSheepColour = color('#BF8665'); // brown
      middleWoolColour = color('#A6754B'); // greyish brown
      outlineOfSheep = color('#593E25');
      shadowColour = color('#8a623e');
      shineyWoolColour = color('#D9A679');
-   } else if (this.wool_colour == 2){
+   } else if (this.wool_colour == 1){
      mainSheepColour = color(250, 249, 230); // cream
      middleWoolColour = color(235, 240, 219); // middle cream
      outlineOfSheep = color(54, 49, 92); // navy blue
      shadowColour = color(224, 224, 206); // shadow cream
      shineyWoolColour = color('white');
-   } else if (this.wool_colour == 3){
+   } else if (this.wool_colour == 2){
      mainSheepColour = color('#A6A6A6'); // grey
      middleWoolColour = color('#8C8B88'); // greyish
      outlineOfSheep = color(54, 49, 92);
@@ -377,7 +377,7 @@ function Face() {
 
   /* set internal properties based on list numbers 0-100 */
   this.setProperties = function(settings) {
-    this.wool_colour = int(map(settings[0], 0, 100, 1, 4));
+    this.wool_colour = int(map(settings[0], 0, 100, 0, 4));
     this.eyeSize = map(settings[1], 0, 100, 0, 1);
     this.ear_tilt = map(settings[2], 0, 100, 0, 1);
     this.earrings = int(map(settings[3], 0, 100, 1, 3));
@@ -388,7 +388,7 @@ function Face() {
   /* get internal properties as list of numbers 0-100 */
   this.getProperties = function() {
     let settings = new Array(5);
-    settings[0] = map(this.wool_colour, 1, 4, 0, 100);
+    settings[0] = map(this.wool_colour, 0, 4, 0, 100);
     settings[1] = map(this.eyeSize, 0, 1, 0, 100);
     settings[2] = map(this.ear_tilt, 0, 1, 0, 100);
     settings[3] = map(this.earrings, 1, 3, 0, 100);
