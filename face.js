@@ -30,14 +30,16 @@ function segment_average(segment) {
 
 // This where you define your own face object
 function Face() {
+
+  this.emotion
   // make random coordinates for head fluff
   this.fluffiList = getRandomCoordinates(20);
-  this.ear_tilt = 0.5;
-  this.wool_colour = 3; // based off of hair colour
-  this.earrings = 1; // based off sex - masculine or feminine
-  this.eyeSize = 0.5;
-  this.emotion = 'depressed'; // based off of age
-
+  this.ear_tilt = 0.5; // based off head angle - are they looking up / dow nat the camera
+  this.wool_colour = 3; // based off hair colour
+  this.earrings = 1; // based off sex - masculine to feminine
+  this.eyeSize = 0.5; //  based off age
+  this.emotion = 'depressed'; // based off mouth (are teeth showing, smiling or average smiling)
+  this.emotionTeller = 0 ;
   /*
    * Draw the face with position lists that include:
    *    chin, right_eye, left_eye, right_eyebrow, left_eyebrow
@@ -139,7 +141,7 @@ function Face() {
    if (showRightSide){
      push()
      translate(1.5, 1)
-     this._drawEars(ear_pos1[0]+0.5, ear_pos1[1]-0.5, mainColour); 
+     this._drawEars(ear_pos1[0], ear_pos1[1], mainColour); 
      pop();
    }
    if (showLeftSide){
@@ -244,7 +246,7 @@ function Face() {
    push();
    angleMode(RADIANS)
    strokeWeight(0.15)
-   rotate(this.ear_tilt); // TODO PUT ALL ANGLES IN RADIANS FUNCTION
+   rotate(this.ear_tilt);
    translate(this.ear_tilt, -this.ear_tilt);
    fill(mainSheepColour);
    arc(x, y, 2, 1.5, 0, PI, OPEN);
@@ -265,13 +267,13 @@ function Face() {
      ellipse(x+0.5, y+1, dotSize, dotSize);
      ellipse(x+0.7, y+1, dotSize, dotSize);
    } else if (this.earrings == 2){
-     // no earrings
-   } else {
      // orange and purple square earrings on top of one another
      fill('purple');
      rect(x+0.2, y+0.5, 0.3, 0.3);
      fill('orange')
      rect(x+0.5, y+0.8, 0.4, 0.4);
+    } else {
+     // no earrings
    }
    pop();
  }
@@ -377,10 +379,10 @@ function Face() {
   this.setProperties = function(settings) {
     this.wool_colour = int(map(settings[0], 0, 100, 1, 4));
     this.eyeSize = map(settings[1], 0, 100, 0, 1);
-    this.ear_tilt = map(settings[2], 0, 100, -0.5, 0.7);
+    this.ear_tilt = map(settings[2], 0, 100, 0, 1);
     this.earrings = int(map(settings[3], 0, 100, 1, 3));
-    let emotionTeller = int(map(settings[4], 0, 100, 1, 3));
-    // this.emotion = emotionTeller == 1 ? 'full of joy' : emotionTeller == 2 ? 'tired' : 'depressed';
+    this.emotionTeller = int(map(settings[4], 0, 100, 1, 3));
+    this.emotion = this.emotionTeller == 1 ? 'full of joy' : this.emotionTeller == 2 ? 'tired' : 'depressed';
   }
 
   /* get internal properties as list of numbers 0-100 */
@@ -388,9 +390,9 @@ function Face() {
     let settings = new Array(5);
     settings[0] = map(this.wool_colour, 1, 4, 0, 100);
     settings[1] = map(this.eyeSize, 0, 1, 0, 100);
-    settings[2] = map(this.ear_tilt, -0.5, 0.7, 0, 100);
+    settings[2] = map(this.ear_tilt, 0, 1, 0, 100);
     settings[3] = map(this.earrings, 1, 3, 0, 100);
-    settings[4] = map(this.emotion, 1, 3, 0, 100);
+    settings[4] = map(this.emotionTeller, 1, 3, 0, 100);
     return settings;
   }
 }
