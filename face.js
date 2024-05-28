@@ -30,10 +30,6 @@ function segment_average(segment) {
 
 // This where you define your own face object
 function Face() {
-
-  this.emotion
-  // make random coordinates for head fluff
-  this.fluffiList = getRandomCoordinates(20);
   this.ear_tilt = 0.5; // based off head angle - are they looking up / dow nat the camera
   this.wool_colour = 3; // based off hair colour
   this.earrings = 1; // based off sex - masculine to feminine
@@ -48,6 +44,8 @@ function Face() {
    * Same pose, different face - training data variables
    */  
   this.draw = function(positions) {
+    // make random coordinates for head fluff for each person
+   this.fluffiList = getRandomCoordinates(25);
    let left_eye_pos = segment_average(positions.left_eye);
    let right_eye_pos = segment_average(positions.right_eye);
 
