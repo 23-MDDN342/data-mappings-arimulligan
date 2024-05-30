@@ -31,6 +31,8 @@ I have commented out all the rotate functionality inside system_runner.js, speci
 
 because I wanted the sheeps faces to be continually straight up, as sheep only tilt their heads if they're sick. Also, this code conflicted with the rotation functionality I already had in the face.js file. 
 
+I also changed the tinting value for the pictures of the different faces, so that you can see the background being merged more into my code (so it looks like an actual picture, and not just code slapped on top of a blurred background).
+
 ### References
 - kids playing in the grass: https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.agrowingunderstanding.com.au%2Fhow-group-programs-can-help-your-child-reach-their-goals%2F&psig=AOvVaw10XZhMxMTUB0QdAkoDnXOp&ust=1716959837469000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCID5hv7Lr4YDFQAAAAAdAAAAABAE
 - Sad girls preview single cover: https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.officialcharts.com%2Fchart-news%2Fclean-bandit-french-the-kid-and-rema-team-up-on-sad-girls-first-listen__37363%2F&psig=AOvVaw28Q8G00pfIWFv1B73dhAb0&ust=1716959991884000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCMjNh-_Mr4YDFQAAAAAdAAAAABBn

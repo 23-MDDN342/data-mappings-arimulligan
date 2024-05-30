@@ -156,7 +156,7 @@ function setup () {
   facePointsCheckbox.parent('checkbox3Container');
 
   if(!DEBUG_MODE) {
-    sliderTint = createSlider(0, 100, 10);
+    sliderTint = createSlider(0, 100, 70);
     sliderTint.parent("sliderTintContainer");
 
     var interpButton = createButton('interpolate');
