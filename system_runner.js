@@ -156,7 +156,7 @@ function setup () {
   facePointsCheckbox.parent('checkbox3Container');
 
   if(!DEBUG_MODE) {
-    sliderTint = createSlider(0, 100, 10);
+    sliderTint = createSlider(0, 100, 70);
     sliderTint.parent("sliderTintContainer");
 
     var interpButton = createButton('interpolate');
@@ -453,7 +453,7 @@ async function draw () {
       translate(x1, y1)
       translate(scale_x*data_mean[0], scale_y*data_mean[1]);
       scale(scale_x*data_scale, scale_y*data_scale);
-      rotate(degrees(data_angle));
+      // rotate(degrees(data_angle));
 
       stroke(0);
       fill(255);
@@ -508,7 +508,7 @@ async function draw () {
       translate(x2, y1)
       translate(scale_x*data_mean[0], scale_y*data_mean[1]);
       scale(scale_x*data_scale, scale_y*data_scale);
-      rotate(degrees(data_angle));
+      // rotate(degrees(data_angle));
       strokeWeight(1/data_scale);
       mainFace.setProperties(settings);
       if (do_draw_face) {
@@ -596,7 +596,7 @@ async function draw () {
       translate(x2, y1);
       translate(scale_x*data_mean[0], scale_y*data_mean[1]);
       scale(scale_x*data_scale, scale_y*data_scale);
-      rotate(degrees(data_angle));
+      // rotate(degrees(data_angle));
       strokeWeight(1/data_scale);
       mainFace.setProperties(params);
       mainFace.draw(shifted_positions);
@@ -616,7 +616,7 @@ async function draw () {
           var settings = trainValues[curKey]
           translate(scale_x*data_mean[0], scale_y*data_mean[1]);
           scale(scale_x*data_scale, scale_y*data_scale);
-          rotate(degrees(data_angle));
+          // rotate(degrees(data_angle));
           strokeWeight(1/data_scale);
           littleFace.setProperties(settings);
           littleFace.draw(shifted_positions);
@@ -764,7 +764,7 @@ async function draw () {
         translate(x2, y2);
         translate(scale_x*data_mean[0], scale_y*data_mean[1]);
         scale(scale_x*data_scale, scale_y*data_scale);
-        rotate(degrees(data_angle));
+        // rotate(degrees(data_angle));
         strokeWeight(1/data_scale);
         if (typeof settings !== 'undefined') {
           littleFace.setProperties(settings);
