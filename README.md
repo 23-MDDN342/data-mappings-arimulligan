@@ -4,6 +4,8 @@
 
 # Summary 
 
+This project focuses on mapping data from a photo to put parameterized faces on top of a photo with people, using a face-scanning AI. I have decided to stick cartoon sheep on peoples faces, depicting a range of: emotions, wool colors, eye sizes, earrings, and ear angles. If the face is turned too far to the left or the right, the code adjusts the face accordingly. I was inspired from my previous project 2, which drew sheep in a field with a shepherd - which is a metaphor for people in the Bible. I thought it would be a good idea if I could map these humanized sheep faces onto people, showing the truth between the Bibles' metaphor and reality. 
+
 # Documentation
 ## Part 1: Face Sketching
 1. Same face, different pose
@@ -16,7 +18,7 @@ The face points from the positions array shapes the sheep face through the shape
 
 The ear placement was very tricky, as chin position still doesn't specify exactly where the ears actually are, and because I've been using different angle modes, the ears still got placed in weird situations. This is why I had to use eyebrow placement and eye placement try get the correct placement of the ears. The nose, cheeks, and mouth are all moved together with the nose tip and bridge positions. 
 
-When a person is turned to the right or to the left significantly, I've made the cheek, ear, and eye disappear so it actually looks like the face has turned to the right or the left. The sheep wool is not determined by anything, it's still just a random generator, as sheeps' fluff should always be random depending on the person :)
+When a person is turned to the right or to the left significantly, I've made the cheek, ear, and eye disappear so it actually looks like the face has turned to the right or the left. The sheep wool is not determined by anything, it's still just a random generator, as sheeps' fluff should always be random depending on the person.
 
 - the sheeps' ear tilt: is based off the persons head angle, like if they're looking up or down at the camera. This turned into more how much of the forehead is showing (ears were tilted really far down) or how much of their jaw was showing (ears were tilted really far up / non existent).
 - the sheeps' wool colour: is based off the persons hair colour. This worked out pretty well. Although people who had brown hair sometimes had nearly black hair, or nearly red hair, so I chose to put the red headed people in the brown sheep category and the brown/black haired people in the black sheep category. I did it this way, because it seemed more rare (the odd black sheep-like) to have brownish black hair than red hair in this set of people! There were only a few gray haired people, so most grey sheep also have huge eyes (because eye size is based off age). I think the AI can tell age apart quite well, because in the Traning Quiz, I can seem to get them correct if I focus on their eye size and emotion. 
@@ -24,7 +26,7 @@ When a person is turned to the right or to the left significantly, I've made the
 - the sheeps' earrings; is based off a persons facial masculinity to femininity. The earrings was a little tricky, because there was only three options: blue earrings, purple earrings, or no earrings. I put all the males in the no earrings because there were much less males in this training data than females, and I wanted to AI to properly identify masculine faces. I then put the females with the most makeup in the blue earrings category, and the females with the least makeup - also with the most defined bone structure in the purple earrings category (these females would be the more 'masculine' type faces). The AI gets a little confused at the females because it is quite specific.
 - the sheeps' emotion: is based off mouth expression - going from the teeth showing smile, teeth covered smile, to anything which isn't a smile. In other words, the emotions were categorized by: full of joy - the person needed to be smiling with their teeth; tired - the person needed to be smiling without their teeth; depressed - the person needed to not be smiling or laughing (I included sad mouth expressions with their teeth showing in this, and thinking back on this, it has given the AI less specificity for the training). 
 
-Thoughts:
+*Thoughts:*
 In the interpolation quiz, it doesn't fully take into account the emotions (some people smiling with teeth are considered as 'tired' sheep) or hair colour (some people with black hair are white wooled sheep - which is irritating but hey what can you do).
 
 ### Changes to the code base
