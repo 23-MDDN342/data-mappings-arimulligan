@@ -4,7 +4,7 @@
  */  
 
 // remove this or set to false to enable full program (load will be slower)
-var DEBUG_MODE = false;
+var DEBUG_MODE = true;
 
 // this can be used to set the number of sliders to show
 var NUM_SLIDERS = 5;
@@ -45,7 +45,7 @@ function Face() {
    */  
   this.draw = function(positions) {
     // make random coordinates for head fluff for each person
-   this.fluffiList = getRandomCoordinates(25);
+   this.fluffiList = getRandomCoordinates(35);
    let left_eye_pos = segment_average(positions.left_eye);
    let right_eye_pos = segment_average(positions.right_eye);
 
@@ -402,14 +402,14 @@ function Face() {
  */
 function getRandomCoordinates(numCoordinates) {
   const coordinates = [];
-  const minY = -4; // TODO: change this, and ask how to make random points 
-  const maxY = -2;
-  const minX = -1;
-  const maxX = 2;
+  const minY = -4.0; // TODO: change this, and ask how to make random points 
+  const maxY = -2.8;
+  const minX = -1.4;
+  const maxX = 1.6;
 
   for (let i = 0; i < numCoordinates; i++) {
-      const x = Math.floor(Math.random() * (maxX - minX + 1)) + minX;
-      const y = Math.floor(Math.random() * (maxY - minY + 1)) + minY;
+      const x = Math.random() * (maxX - minX + 1.0) + minX;
+      const y = Math.random() * (maxY - minY + 1.0) + minY;
       coordinates.push({ x, y });
   }
 
