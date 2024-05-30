@@ -24,6 +24,9 @@ When a person is turned to the right or to the left significantly, I've made the
 - the sheeps' earrings; is based off a persons facial masculinity to femininity. The earrings was a little tricky, because there was only three options: blue earrings, purple earrings, or no earrings. I put all the males in the no earrings because there were much less males in this training data than females, and I wanted to AI to properly identify masculine faces. I then put the females with the most makeup in the blue earrings category, and the females with the least makeup - also with the most defined bone structure in the purple earrings category (these females would be the more 'masculine' type faces). The AI gets a little confused at the females because it is quite specific.
 - the sheeps' emotion: is based off mouth expression - going from the teeth showing smile, teeth covered smile, to anything which isn't a smile. In other words, the emotions were categorized by: full of joy - the person needed to be smiling with their teeth; tired - the person needed to be smiling without their teeth; depressed - the person needed to not be smiling or laughing (I included sad mouth expressions with their teeth showing in this, and thinking back on this, it has given the AI less specificity for the training). 
 
+Thoughts:
+In the interpolation quiz, it doesn't fully take into account the emotions (some people smiling with teeth are considered as 'tired' sheep) or hair colour (some people with black hair are white wooled sheep - which is irritating but hey what can you do).
+
 ### Changes to the code base
 I have commented out all the rotate functionality inside system_runner.js, specifically these lines: 
 

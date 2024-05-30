@@ -4,18 +4,11 @@
  */  
 
 // remove this or set to false to enable full program (load will be slower)
-var DEBUG_MODE = true;
+var DEBUG_MODE = false;
 
 // this can be used to set the number of sliders to show
 var NUM_SLIDERS = 5;
 
-// other variables can be in here too
-// here's some examples for colors used
-
-
-const stroke_color = [95, 52, 8];
-
-// example of a global function
 // given a segment, this returns the average point [x, y]
 function segment_average(segment) {
   let sum_x = 0;
@@ -26,6 +19,48 @@ function segment_average(segment) {
     sum_y = sum_y + segment[i][1];
   }
   return [sum_x / s_len , sum_y / s_len ];
+}
+
+/**
+ * Other global functions, from ChatGBT, altered to my code.
+ * @param {*} numCoordinates max coords you want
+ * @returns coordinates
+ */
+function getRandomCoordinates(numCoordinates) {
+  const coordinates = [];
+  const minY = -4.0;
+  const maxY = -2.8;
+  const minX = -1.4;
+  const maxX = 1.6;
+
+  for (let i = 0; i < numCoordinates; i++) {
+      const x = Math.random() * (maxX - minX + 1.0) + minX;
+      const y = Math.random() * (maxY - minY + 1.0) + minY;
+      coordinates.push({ x, y });
+  }
+
+  return coordinates;
+}
+
+/**
+ * From ChatGBT, altered to my code.
+ * @param {*} numCoordinates 
+ * @param {*} minY 
+ * @param {*} maxY 
+ * @param {*} minX 
+ * @param {*} maxX 
+ * @returns coordinates
+ */
+function getSpecificRandomCoordinates(numCoordinates, minY, maxY, minX, maxX) {
+  const coordinates = [];
+
+  for (let i = 0; i < numCoordinates; i++) {
+      const x = Math.random() * (maxX - minX + 1.0) + minX;
+      const y = Math.random() * (maxY - minY + 1.0) + minY;
+      coordinates.push({ x, y });
+  }
+
+  return coordinates;
 }
 
 // This where you define your own face object
@@ -44,56 +79,65 @@ function Face() {
    * Same pose, different face - training data variables
    */  
   this.draw = function(positions) {
+    let left_eye_pos = segment_average(positions.left_eye);
+    let right_eye_pos = segment_average(positions.right_eye);
+    
+    let pink = color(227, 132, 163, 200);
+    let mainSheepColour;
+    let middleWoolColour;
+    let outlineOfSheep;
+    let shadowColour;
+    let shineyWoolColour;
+    
+    if (this.wool_colour == 0){
+      mainSheepColour = color('#BF8665'); // brown
+      middleWoolColour = color('#A6754B'); // greyish brown
+      outlineOfSheep = color('#593E25');
+      shadowColour = color('#8a623e');
+      shineyWoolColour = color('#D9A679');
+    } else if (this.wool_colour == 1){
+      mainSheepColour = color(250, 249, 230); // cream
+      middleWoolColour = color(235, 240, 219); // middle cream
+      outlineOfSheep = color(54, 49, 92); // navy blue
+      shadowColour = color(224, 224, 206); // shadow cream
+      shineyWoolColour = color('white');
+    } else if (this.wool_colour == 2){
+      mainSheepColour = color('#A6A6A6'); // grey
+      middleWoolColour = color('#8C8B88'); // greyish
+      outlineOfSheep = color(54, 49, 92);
+      shadowColour = color('#8a8986');
+      shineyWoolColour = color('#BFBFBF');
+    } else {
+      // the black sheep
+      mainSheepColour = color('#4a4848');
+      middleWoolColour = color('#3d3c3c');
+      outlineOfSheep = color('black');
+      shadowColour = color('#2e2d2d');
+      shineyWoolColour = color('#636161');
+    }
+    
+    // turning left or right
+    let tipOfNoseBridgeX = positions.nose_bridge[positions.nose_bridge.length-1][0];
+    let showLeftSide = Math.abs(tipOfNoseBridgeX - positions.chin[2][0]) < 0.8 ? false : true;
+    let showRightSide = Math.abs(tipOfNoseBridgeX - positions.chin[14][0]) < 0.8 ? false : true;
+    
+    // if turned, need to draw side hair
+    if (showLeftSide){
+      this.fluffiList = getSpecificRandomCoordinates(45, -4, 1, -3, -0.5);
+      this._drawWool(shadowColour, middleWoolColour, mainSheepColour, shineyWoolColour);
+    }
+    if (showRightSide){
+      this.fluffiList = getSpecificRandomCoordinates(45, -4, 1, 0.5, 3);
+      this._drawWool(shadowColour, middleWoolColour, mainSheepColour, shineyWoolColour);
+    } 
+    // draw the sheep using private methods
+    this._drawEarsAndFaceShape(positions.chin, left_eye_pos, right_eye_pos, positions.right_eyebrow[2][1], showLeftSide, showRightSide, mainSheepColour, shadowColour);
     // make random coordinates for head fluff for each person
-   this.fluffiList = getRandomCoordinates(35);
-   let left_eye_pos = segment_average(positions.left_eye);
-   let right_eye_pos = segment_average(positions.right_eye);
-
-   let pink = color(227, 132, 163, 200);
-   let mainSheepColour;
-   let middleWoolColour;
-   let outlineOfSheep;
-   let shadowColour;
-   let shineyWoolColour;
- 
-   if (this.wool_colour == 0){
-     mainSheepColour = color('#BF8665'); // brown
-     middleWoolColour = color('#A6754B'); // greyish brown
-     outlineOfSheep = color('#593E25');
-     shadowColour = color('#8a623e');
-     shineyWoolColour = color('#D9A679');
-   } else if (this.wool_colour == 1){
-     mainSheepColour = color(250, 249, 230); // cream
-     middleWoolColour = color(235, 240, 219); // middle cream
-     outlineOfSheep = color(54, 49, 92); // navy blue
-     shadowColour = color(224, 224, 206); // shadow cream
-     shineyWoolColour = color('white');
-   } else if (this.wool_colour == 2){
-     mainSheepColour = color('#A6A6A6'); // grey
-     middleWoolColour = color('#8C8B88'); // greyish
-     outlineOfSheep = color(54, 49, 92);
-     shadowColour = color('#8a8986');
-     shineyWoolColour = color('#BFBFBF');
-   } else {
-     // the black sheep
-     mainSheepColour = color('#4a4848');
-     middleWoolColour = color('#3d3c3c');
-     outlineOfSheep = color('black');
-     shadowColour = color('#2e2d2d');
-     shineyWoolColour = color('#636161');
-   }
-
-   // turning left or right
-   let tipOfNoseBridgeX = positions.nose_bridge[positions.nose_bridge.length-1][0];
-   let showLeftSide = Math.abs(tipOfNoseBridgeX - positions.chin[2][0]) < 0.7 ? false : true;
-   let showRightSide = Math.abs(tipOfNoseBridgeX - positions.chin[14][0]) < 0.7 ? false : true;
-
-   // draw the sheep using private methods
-   this._drawEarsAndFaceShape(positions.chin, left_eye_pos, right_eye_pos, positions.right_eyebrow[2][1], showLeftSide, showRightSide, mainSheepColour, shadowColour);
-   this._drawWool(shadowColour, middleWoolColour, mainSheepColour, shineyWoolColour);
-   this._drawPupils(left_eye_pos, right_eye_pos, showLeftSide, showRightSide, outlineOfSheep, mainSheepColour);
-   
-   // move cheeks, nose and mouth down according to faceSize
+    this.fluffiList = getRandomCoordinates(35);
+    this._drawWool(shadowColour, middleWoolColour, mainSheepColour, shineyWoolColour);
+    this._drawPupils(left_eye_pos, right_eye_pos, showLeftSide, showRightSide, outlineOfSheep, mainSheepColour);
+    
+    // move cheeks, nose and mouth down according to faceSize
    let cheekPosition1 = positions.nose_tip[0];
    let cheekPosition2 = positions.nose_tip[positions.nose_tip.length-1];
    let nosePosition = segment_average(positions.nose_tip);
@@ -220,7 +264,7 @@ function Face() {
  }
 
  this._drawWool = function(shadowColour, middleWoolColour, mainSheepColour, shineyWoolColour){
-   for (let i = 0; i < this.fluffiList.length; i++){
+  for (let i = 0; i < this.fluffiList.length; i++){
      let drawShine = false;
      if (this.fluffiList[i].y < -3){
        drawShine = true;
@@ -393,25 +437,4 @@ function Face() {
     settings[4] = map(this.emotionTeller, 1, 3, 0, 100);
     return settings;
   }
-}
-
-/**
- * From ChatGBT, altered to my code.
- * @param {*} numCoordinates max coords you want
- * @returns coordinates
- */
-function getRandomCoordinates(numCoordinates) {
-  const coordinates = [];
-  const minY = -4.0; // TODO: change this, and ask how to make random points 
-  const maxY = -2.8;
-  const minX = -1.4;
-  const maxX = 1.6;
-
-  for (let i = 0; i < numCoordinates; i++) {
-      const x = Math.random() * (maxX - minX + 1.0) + minX;
-      const y = Math.random() * (maxY - minY + 1.0) + minY;
-      coordinates.push({ x, y });
-  }
-
-  return coordinates;
 }
